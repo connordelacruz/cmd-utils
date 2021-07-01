@@ -8,7 +8,7 @@ with open(os.path.join(base_path, 'README.rst')) as f:
 
 setup(
     name='cmd_utils',
-    version='1.0.0',
+    version='1.1.0',
     author='Connor de la Cruz',
     author_email='connor.c.delacruz@gmail.com',
     description='Utilities for command line tools.',
