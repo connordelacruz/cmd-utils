@@ -1,4 +1,4 @@
-"""Output formatting functions"""
+"""Output formatting functions."""
 from blessings import Terminal
 
 # GLOBALS ======================================================================
