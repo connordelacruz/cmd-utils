@@ -47,52 +47,59 @@ def format_prompt_text(prompt_text, default_val=None):
     ) + ': ')
 
 
+def indent(text, n=1):
+    """Indent a string.
+
+    :param text: Text to indent.
+    :param n: (Default: 1) Number of times to indent. Also accepts True (indent once) or False (no indent)
+
+    :return: Indented string
+    """
+    return INDENT * n + text
+
+
 # PRINTING FUNCTIONS ===========================================================
 
-
-def print_multiline(first_line, *lines,
-                    formatting=None, first_line_formatting=None,
-                    indent=True, indent_first_line=False):
+def print_multiline(first_line, *subsequent_lines,
+                    first_line_formatting=None, text_formatting=None,
+                    indent_first_line=False, indent_subsequent_lines=True):
     """Print multiple lines
 
     :param first_line: First line to print
-    :param lines: Positional parameters will each be printed on their own line
-    :param formatting: (Optional) Set to a formatting constant to format each
-        line
+    :param subsequent_lines: Positional parameters will each be printed on their own line
     :param first_line_formatting: (Optional) Set to override formatting for the
         first line
-    :param indent: (Default: True) If True and there's multiple lines, indent
-        all lines after the first
+    :param text_formatting: (Optional) Set to a formatting constant to format each
+        line
     :param indent_first_line: (Default: False) If True, indent the first line
+    :param indent_subsequent_lines: (Default: True) If True and there's multiple lines, indent
+        all lines after the first
     """
-    if formatting not in COLORS:
-        formatting = None
+    if text_formatting not in COLORS:
+        text_formatting = None
     if first_line_formatting is None or first_line_formatting not in COLORS:
-        first_line_formatting = formatting
-    fmt_func = COLORS[formatting]
+        first_line_formatting = text_formatting
     first_line_fmt_func = COLORS[first_line_formatting]
-
-    first_line_prefix = INDENT if indent_first_line else ''
-    print(first_line_fmt_func(first_line_prefix + str(first_line)))
-
-    if lines:
-        line_prefix = INDENT if indent else ''
-        for line in lines:
-            print(fmt_func(line_prefix + str(line)))
+    fmt_func = COLORS[text_formatting]
+    # Print 1st line
+    print(first_line_fmt_func(indent(str(first_line), indent_first_line)))
+    # Print subsequent lines
+    if subsequent_lines:
+        for line in subsequent_lines:
+            print(fmt_func(indent(str(line), indent_subsequent_lines)))
 
 
 def print_error(*lines):
-    print_multiline(*lines, first_line_formatting=ERROR_TITLE, formatting=ERROR)
+    print_multiline(*lines, first_line_formatting=ERROR_TITLE, text_formatting=ERROR)
 
 
 def print_warning(*lines):
-    print_multiline(*lines, formatting=WARNING)
+    print_multiline(*lines, text_formatting=WARNING)
 
 
 def print_success(*lines):
-    print_multiline(*lines, formatting=SUCCESS)
+    print_multiline(*lines, text_formatting=SUCCESS)
 
 
 def print_info(*lines):
-    print_multiline(*lines, formatting=INFO)
-
+    print_multiline(*lines, text_formatting=INFO)

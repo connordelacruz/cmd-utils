@@ -1,6 +1,6 @@
 """Prompt validation functions."""
 import re
-from cmd_utils.fmt import INDENT
+from cmd_utils.fmt import indent
 
 
 # Exception ====================================================================
@@ -67,7 +67,7 @@ def generate_validate_regex_function(expr, default_error_msg='No matches found.'
         if not error_msg:
             error_msg = default_error_msg
         if show_expr_in_error_msg:
-            error_msg += '\n' + INDENT + 'Must match regex: ' + expr
+            error_msg += '\n' + indent('Must match regex: ' + expr)
         res = re.findall(expr, val)
         if not res:
             raise ValidationError(error_msg)
