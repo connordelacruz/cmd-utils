@@ -1,4 +1,6 @@
 """Output formatting functions."""
+import textwrap
+
 from blessings import Terminal
 
 # GLOBALS ======================================================================
@@ -103,3 +105,27 @@ def print_success(*lines):
 
 def print_info(*lines):
     print_multiline(*lines, text_formatting=INFO)
+
+
+def print_header(*lines, center_char='=',
+                 max_line_width=80, center_maxed_lines=False,
+                 uppercase=True):
+    """Print a header
+
+    :param lines: Lines to print
+    :param center_char: (Default: '=') Character to use when centering lines
+    :param max_line_width: (Default: 80) Max width of each header line (including centering characters)
+    :param center_maxed_lines: (Default: False) If true, center align header in terminal window
+    :param uppercase: (Default: True) If true, capitalize all letters in header
+    """
+    # Default to term width for max line width
+    if max_line_width is None or max_line_width <= 4:
+        max_line_width = _term.width
+    for line in lines:
+        # Wrap each line that's longer than the terminal window
+        # (-4 for 2 center_chars and 2 padding spaces)
+        for wrapped_line in textwrap.wrap(line, max_line_width - 4):
+            formatted_line = f' {wrapped_line.upper() if uppercase else wrapped_line} '.center(max_line_width, center_char)
+            if center_maxed_lines:
+                formatted_line = formatted_line.center(_term.width)
+            print(formatted_line)
