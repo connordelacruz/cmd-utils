@@ -2,6 +2,15 @@
 from cmd_utils.fmt import *
 from cmd_utils.validate import *
 
+# GLOBALS ======================================================================
+
+# Prompt types
+TYPE_TEXT = 'text'
+TYPE_YES_NO = 'yes/no'
+TYPE_CHOICE = 'choice'
+
+
+# PROMPT FUNCTIONS =============================================================
 
 def sanitize_input(val):
     """Basic prompt input validation.
@@ -14,8 +23,10 @@ def sanitize_input(val):
 
 
 # TODO: doc and implement optional, support validation for optional args
+# TODO: support different prompt types, use different default validate functions
 def prompt(prompt_text, *extended_description,
-           initial_input=None, default_val=None,
+           prompt_type=TYPE_TEXT, choice_list=None,
+           optional=False, initial_input=None, default_val=None,
            sanitize_function=sanitize_input, validate_function=validate_nonempty, format_function=None,
            invalid_msg=None, print_newline_on_success=True):
     """Prompt user for input
@@ -44,6 +55,9 @@ def prompt(prompt_text, *extended_description,
 
     :return: Input after sanitization, formatting, and validation
     """
+    # TODO: get default validate_function based on prompt_type, optional, choice_list
+    # if validate_function is None:
+    #     pass
     # If input for this prompt was given via an argument, attempt to validate
     # it and bypass prompt
     if initial_input is not None:
@@ -53,11 +67,17 @@ def prompt(prompt_text, *extended_description,
                 initial_input = format_function(initial_input)
             val = validate_function(initial_input, invalid_msg)
         except ValidationError as e:
-            print_error(e)
+            # Handle optional prompts if val is empty
+            if optional and (e.val is None or e.val == ''):
+                print('we optional so it ok')
+                return e.val if default_val is None else default_val
+            else:
+                print_error(e)
         else:
             return val
     # Print description and prompt
     if extended_description:
+        # TODO: Prefix with '(Optional) ' for optional prompts
         print(*extended_description, sep='\n')
     text = format_prompt_text(prompt_text, default_val=default_val)
     # Loop until we get valid input
@@ -73,9 +93,14 @@ def prompt(prompt_text, *extended_description,
         try:
             val = validate_function(val, invalid_msg)
         except ValidationError as e:
+            # Handle optional prompts
+            if optional and (e.val is None or e.val == ''):
+                print('we optional so it ok')
+                break
             print_error(e)
             continue
         break
     if print_newline_on_success:
         print('')
     return val
+

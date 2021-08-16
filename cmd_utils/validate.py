@@ -7,7 +7,9 @@ from cmd_utils.fmt import indent
 
 class ValidationError(Exception):
     """Raised if input validation fails"""
-    pass
+    def __init__(self, *args, val):
+        super().__init__(*args)
+        self.val = val
 
 
 # Validation Functions =========================================================
@@ -27,7 +29,7 @@ def validate_nonempty(val, error_msg=None):
     :return: Validated input
     """
     if not val:
-        raise ValidationError(error_msg or 'Please enter some text.')
+        raise ValidationError(error_msg or 'Please enter some text.', val=val)
     return val
 
 
@@ -46,7 +48,7 @@ def validate_yn(val, error_msg=None):
         return val
     val = val.lower().strip()
     if val not in ['y', 'yes', 'n', 'no']:
-        raise ValidationError(error_msg or 'Please enter "y" or "n".')
+        raise ValidationError(error_msg or 'Please enter "y" or "n".', val=val)
     return val in ['y', 'yes']
 
 
@@ -70,6 +72,6 @@ def generate_validate_regex_function(expr, default_error_msg='No matches found.'
             error_msg += '\n' + indent('Must match regex: ' + expr)
         res = re.findall(expr, val)
         if not res:
-            raise ValidationError(error_msg)
+            raise ValidationError(error_msg, val=val)
         return res[0]
     return validate_regex
