@@ -8,6 +8,7 @@ from cmd_utils.validate import *
 TYPE_TEXT = 'text'
 TYPE_YES_NO = 'yes/no'
 TYPE_CHOICE = 'choice'
+# TODO: TYPE_NUMERIC?
 
 
 # PROMPT FUNCTIONS =============================================================
@@ -22,7 +23,6 @@ def sanitize_input(val):
     return val.strip()
 
 
-# TODO: doc and implement optional, support validation for optional args
 # TODO: support different prompt types, use different default validate functions
 def prompt(prompt_text, *extended_description,
            prompt_type=TYPE_TEXT, choice_list=None,
@@ -32,9 +32,12 @@ def prompt(prompt_text, *extended_description,
     """Prompt user for input
 
     :param prompt_text: Text to display next to input area
-    :param *extended_description: (Optional) Explanation of prompt. Printed
+    :param extended_description: (Optional) Explanation of prompt. Printed
         before prompt. Each positional parameter here is printed on its own
         line
+
+    :param optional: (Default: False) If True, empty values are not treated as
+        invalid, even if validation_func throws an exception
 
     :param initial_input: (Optional) Initial input (e.g. something passed in
         via command line args). If it passes validation, will use this and skip
