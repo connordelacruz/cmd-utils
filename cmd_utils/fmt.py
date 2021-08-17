@@ -31,24 +31,6 @@ INDENT = ' ' * 4
 
 # STRING FORMAT FUNCTIONS ======================================================
 
-# TODO optional arg?
-# TODO support types (yes/no, choices, choices_with_default?)
-def format_prompt_text(prompt_text, default_val=None):
-    """Returns formatted prompt text string.
-
-    :param prompt_text: Text to display in prompt
-    :param default_val: (Optional) Default value to display in brackets next to
-        prompt text
-
-    :return: Formatted prompt text string
-    """
-    return COLORS[PROMPT]('> ' + (
-        f'{prompt_text} [{default_val}]'
-        if default_val is not None else
-        prompt_text
-    ) + ': ')
-
-
 def indent(text, n=1):
     """Indent a string.
 

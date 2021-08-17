@@ -16,7 +16,6 @@ class ValidationError(Exception):
 
 def validate_optional_prompt(val, error_msg=None):
     """Dummy validation function for optional prompts. Just returns val"""
-    # TODO Should there just be an option in prompt()? If input is non-blank you'll probably still wanna validate it
     return val
 
 
