@@ -23,7 +23,6 @@ def sanitize_input(val):
     return val.strip()
 
 
-# TODO choice_list?
 def format_prompt_text(prompt_text, default_val=None, prompt_type=TYPE_TEXT):
     """Returns formatted prompt text string.
 
@@ -34,20 +33,28 @@ def format_prompt_text(prompt_text, default_val=None, prompt_type=TYPE_TEXT):
 
     :return: Formatted prompt text string
     """
-    formatted_prompt = f'> {prompt_text} '
+    formatted_prompt = f'> {prompt_text}'
     if prompt_type == TYPE_YES_NO:
         if default_val is None:
-            formatted_prompt += '(y/n)'
+            formatted_prompt += ' (y/n)'
         elif default_val in ('y', 'n'):
-            formatted_prompt += '(y/[n])' if default_val == 'n' else '([y]/n)'
+            formatted_prompt += ' (y/[n])' if default_val == 'n' else ' ([y]/n)'
     else:
         if default_val is not None:
-            formatted_prompt += f'[{default_val}]'
+            formatted_prompt += f' [{default_val}]'
     return COLORS[PROMPT](formatted_prompt + ': ')
 
 
 def get_default_validate_function(prompt_type, optional=False, choice_list=None):
-    # TODO: doc
+    """Returns the default validation function based on the prompt type
+
+    :param prompt_type: The type of prompt this is
+    :param optional: (Default: False) Whether this is an optional
+    :param choice_list: (Required if prompt_type=TYPE_CHOICE) List of options
+        for a choice prompt
+
+    :return: The default validation function for each type
+    """
     # Default to validate_nonempty
     validate_function = validate_nonempty
     # Use validate_optional_prompt for optional text prompts.
@@ -58,13 +65,12 @@ def get_default_validate_function(prompt_type, optional=False, choice_list=None)
     elif prompt_type == TYPE_YES_NO:
         validate_function = validate_yn
     elif prompt_type == TYPE_CHOICE:
-        # TODO: generate_validate_choice_function
-        pass
+        # TODO: exception if no list
+        validate_function = generate_validate_choice_function(choice_list)
     return validate_function
 
 
-# TODO: support different prompt types, use different default validate functions
-# TODO: doc new params, list types of prompts
+# TODO: list types of prompts
 def prompt(prompt_text, *extended_description,
            prompt_type=TYPE_TEXT, choice_list=None, optional=False,
            initial_input=None, default_val=None,
@@ -79,6 +85,8 @@ def prompt(prompt_text, *extended_description,
 
     :param prompt_type: (Default: TYPE_TEXT) Specify the type of prompt this is.
         Default validation and output varies for different types
+    :param choice_list: (Required if prompt_type=TYPE_CHOICE) List of options
+        for a choice prompt
     :param optional: (Default: False) If True, empty values are not treated as
         invalid, even if validation_func throws an exception
 
@@ -115,16 +123,26 @@ def prompt(prompt_text, *extended_description,
         except ValidationError as e:
             # Handle optional prompts if val is empty
             if optional and (e.val is None or e.val == ''):
-                print('we optional so it ok')
                 return e.val if default_val is None else default_val
             else:
                 print_error(e)
         else:
             return val
-    # Print description and prompt
+    # Print description
     if extended_description:
         # TODO: Prefix with '(Optional) ' for optional prompts?
         print(*extended_description, sep='\n')
+    # Print choice_list if applicable
+    if prompt_type == TYPE_CHOICE:
+        # TODO: exception if no list
+        # TODO: move to fmt, use in validate function
+        print(
+            '',
+            *[f'[{i}]: {choice_list[i]}' for i in range(0, len(choice_list))],
+            '',
+            sep='\n'
+        )
+    # Format prompt
     text = format_prompt_text(prompt_text, default_val=default_val, prompt_type=prompt_type)
     # Loop until we get valid input
     while True:
@@ -141,7 +159,6 @@ def prompt(prompt_text, *extended_description,
         except ValidationError as e:
             # Handle optional prompts
             if optional and (e.val is None or e.val == ''):
-                print('we optional so it ok')
                 break
             print_error(e)
             continue

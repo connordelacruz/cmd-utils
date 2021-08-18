@@ -53,8 +53,11 @@ def validate_yn(val, error_msg=None):
 
 # Validation Function Generators ===============================================
 
-def generate_validate_regex_function(expr, default_error_msg='No matches found.', show_expr_in_error_msg=True):
-    """Generate a validation function that validates a given regular expression.
+def generate_validate_regex_function(expr,
+                                     default_error_msg='No matches found.',
+                                     show_expr_in_error_msg=True):
+    """Generate a validation function that checks if the value is matched by a
+    given regular expression.
 
     :param expr: Regular expression to validate against
     :param default_error_msg: (Optional) Default validation error message to use
@@ -65,12 +68,47 @@ def generate_validate_regex_function(expr, default_error_msg='No matches found.'
     :return: Generated validation function
     """
     def validate_regex(val, error_msg=None):
-        if not error_msg:
-            error_msg = default_error_msg
-        if show_expr_in_error_msg:
-            error_msg += '\n' + indent('Must match regex: ' + expr)
         res = re.findall(expr, val)
         if not res:
+            # Build error message
+            if not error_msg:
+                error_msg = default_error_msg
+            if show_expr_in_error_msg:
+                error_msg += '\n' + indent('Must match regex: ' + expr)
+            # Raise exception
             raise ValidationError(error_msg, val=val)
         return res[0]
     return validate_regex
+
+
+def generate_validate_choice_function(choice_list,
+                                      default_error_msg='Invalid choice. Please choose one of the following:'):
+    """Generate a validation function that checks if the value is a valid
+    choice in a given choice list.
+
+    :param choice_list: List of valid choices
+    :param default_error_msg: (Optional) Default validation error message to use
+        in this validation function
+
+    :return: Generated validation function
+    """
+    valid_options = [i for i in range(0, len(choice_list))]
+
+    def validate_choice(val, error_msg=None):
+        try:
+            val = int(val)
+        except ValueError:
+            # If val can't convert to an int, continue since the following if statement will fail
+            pass
+        if val not in valid_options:
+            # Build error message
+            if not error_msg:
+                error_msg = default_error_msg
+            choice_list_text = '\n'.join([
+                f'[{i}]: {choice_list[i]}' for i in valid_options
+            ])
+            error_msg += '\n\n' + choice_list_text + '\n'
+            # Raise exception
+            raise ValidationError(error_msg, val=val)
+        return val
+    return validate_choice
