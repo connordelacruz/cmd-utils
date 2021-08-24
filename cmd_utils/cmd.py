@@ -46,7 +46,18 @@ def format_prompt_text(prompt_text, default_val=None, prompt_type=TYPE_TEXT):
 
 
 def get_default_validate_function(prompt_type, optional=False, choice_list=None):
-    """Returns the default validation function based on the prompt type
+    """Returns the default validation function based on the prompt type.
+
+    **Default Validation Functions:**
+
+    * TYPE_TEXT:
+
+        * validate_nonempty if not optional
+        * validate_optional_prompt if optional
+
+    * TYPE_YES_NO: validate_yn
+    * TYPE_CHOICE: return value of generate_validate_choice_function(choice_list)
+    * if prompt_type is not recognized, defaults to validate_nonempty
 
     :param prompt_type: The type of prompt this is
     :param optional: (Default: False) Whether this is an optional
@@ -65,12 +76,11 @@ def get_default_validate_function(prompt_type, optional=False, choice_list=None)
     elif prompt_type == TYPE_YES_NO:
         validate_function = validate_yn
     elif prompt_type == TYPE_CHOICE:
-        # TODO: exception if no list
         validate_function = generate_validate_choice_function(choice_list)
     return validate_function
 
 
-# TODO: list types of prompts
+# TODO: support storing additional data in choice_list
 def prompt(prompt_text, *extended_description,
            prompt_type=TYPE_TEXT, choice_list=None, optional=False,
            initial_input=None, default_val=None,
@@ -84,7 +94,21 @@ def prompt(prompt_text, *extended_description,
         line
 
     :param prompt_type: (Default: TYPE_TEXT) Specify the type of prompt this is.
-        Default validation and output varies for different types
+        Default validation and output varies for different types.
+
+        **Prompt Types:**
+
+        * TYPE_TEXT: A basic prompt that takes text input
+        * TYPE_YES_NO: Prompts the user for yes or no, returns True or False respectively
+
+            * **NOTE:** Behavior with optional=True is untested, recommend using
+              default_val='y' or default_val='n'
+
+        * TYPE_CHOICE: Presents the user with a list of options and prompts them for the
+          number corresponding to their desired choice
+
+            * **NOTE:** choice_list parameter is required for choice prompts
+
     :param choice_list: (Required if prompt_type=TYPE_CHOICE) List of options
         for a choice prompt
     :param optional: (Default: False) If True, empty values are not treated as
@@ -109,6 +133,9 @@ def prompt(prompt_text, *extended_description,
 
     :return: Input after sanitization, formatting, and validation
     """
+    # Check that we have everything we need based on prompt_type
+    if prompt_type == TYPE_CHOICE and choice_list is None or len(choice_list) == 0:
+        raise Exception('choice_list is required and must be non-empty if prompt_type is TYPE_CHOICE')
     # If unspecified, get default validate_function based on type
     if validate_function is None:
         validate_function = get_default_validate_function(prompt_type, optional, choice_list)
@@ -134,7 +161,6 @@ def prompt(prompt_text, *extended_description,
         print(*extended_description, sep='\n')
     # Print choice_list if applicable
     if prompt_type == TYPE_CHOICE:
-        # TODO: exception if no list
         # TODO: move to fmt, use in validate function
         print(
             '',
