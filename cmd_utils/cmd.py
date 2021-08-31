@@ -155,7 +155,7 @@ def prompt(prompt_text, *extended_description,
     :return: Input after sanitization, formatting, and validation
     """
     # Check that we have everything we need based on prompt_type
-    if prompt_type == TYPE_CHOICE and choice_list is None or len(choice_list) == 0:
+    if prompt_type == TYPE_CHOICE and (choice_list is None or len(choice_list) == 0):
         raise Exception('choice_list is required and must be non-empty if prompt_type is TYPE_CHOICE')
     # If unspecified, get default validate_function based on type
     if validate_function is None:
