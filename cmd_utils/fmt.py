@@ -42,6 +42,20 @@ def indent(text, n=1):
     return INDENT * n + text
 
 
+# TODO: doc and implement
+def format_choice_list_text(choice_list):
+    # Descriptions assumed to be in 1st position for choice lists with data
+    if type(choice_list[0]) in (list, tuple):
+        choice_descriptions = [
+            choice[0] for choice in choice_list
+        ]
+    else:
+        choice_descriptions = choice_list
+    return '\n'.join([
+        f'[{i}]: {choice_descriptions[i]}' for i in range(0, len(choice_descriptions))
+    ])
+
+
 # PRINTING FUNCTIONS ===========================================================
 
 def print_multiline(first_line, *subsequent_lines,

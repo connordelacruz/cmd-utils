@@ -1,6 +1,6 @@
 """Prompt validation functions."""
 import re
-from cmd_utils.fmt import indent
+from cmd_utils.fmt import indent, format_choice_list_text
 
 
 # Exception ====================================================================
@@ -86,6 +86,27 @@ def generate_validate_choice_function(choice_list,
     """Generate a validation function that checks if the value is a valid
     choice in a given choice list.
 
+    items in choice_list can either be a string, e.g.:
+
+    choice_list = [
+        'Option 0 Description',
+        'Option 1 Description',
+        'Option 2 Description',
+    ]
+
+    or a tuple, where the 1st element is the description string and the 2nd is any value, e.g.:
+
+    choice_list = [
+        ('Option 0 Description', value0),
+        ('Option 1 Description', value1),
+        ('Option 2 Description', value2),
+    ]
+
+    When input is valid, the function will return:
+
+    * The index of the choice for a list of strings, or
+    * The 2nd element in the tuple for a list of tuples
+
     :param choice_list: List of valid choices
     :param default_error_msg: (Optional) Default validation error message to use
         in this validation function
@@ -104,11 +125,11 @@ def generate_validate_choice_function(choice_list,
             # Build error message
             if not error_msg:
                 error_msg = default_error_msg
-            choice_list_text = '\n'.join([
-                f'[{i}]: {choice_list[i]}' for i in valid_options
-            ])
-            error_msg += '\n\n' + choice_list_text + '\n'
+            error_msg += '\n\n' + format_choice_list_text(choice_list) + '\n'
             # Raise exception
             raise ValidationError(error_msg, val=val)
+        # Return the index or the associated data if applicable
+        if type(choice_list[val]) in (list, tuple):
+            val = choice_list[val][1]
         return val
     return validate_choice

@@ -80,7 +80,6 @@ def get_default_validate_function(prompt_type, optional=False, choice_list=None)
     return validate_function
 
 
-# TODO: support storing additional data in choice_list
 def prompt(prompt_text, *extended_description,
            prompt_type=TYPE_TEXT, choice_list=None, optional=False,
            initial_input=None, default_val=None,
@@ -111,6 +110,28 @@ def prompt(prompt_text, *extended_description,
 
     :param choice_list: (Required if prompt_type=TYPE_CHOICE) List of options
         for a choice prompt
+
+        items in choice_list can either be a string, e.g.:
+
+        choice_list = [
+            'Option 0 Description',
+            'Option 1 Description',
+            'Option 2 Description',
+        ]
+
+        or a tuple, where the 1st element is the description string and the 2nd is any value, e.g.:
+
+        choice_list = [
+            ('Option 0 Description', value0),
+            ('Option 1 Description', value1),
+            ('Option 2 Description', value2),
+        ]
+
+        When input is valid, the default choice list validation function will return:
+
+        * The index of the choice for a list of strings, or
+        * The 2nd element in the tuple for a list of tuples
+
     :param optional: (Default: False) If True, empty values are not treated as
         invalid, even if validation_func throws an exception
 
@@ -157,14 +178,12 @@ def prompt(prompt_text, *extended_description,
             return val
     # Print description
     if extended_description:
-        # TODO: Prefix with '(Optional) ' for optional prompts?
         print(*extended_description, sep='\n')
     # Print choice_list if applicable
     if prompt_type == TYPE_CHOICE:
-        # TODO: move to fmt, use in validate function
         print(
             '',
-            *[f'[{i}]: {choice_list[i]}' for i in range(0, len(choice_list))],
+            format_choice_list_text(choice_list),
             '',
             sep='\n'
         )
