@@ -9,11 +9,16 @@ def test_format_and_print_methods():
     cmd.print_header('FORMAT AND PRINT METHODS')
     print('')
     # Print methods
-    cmd.print_multiline('MULTILINE line 1', 'line 2', 'line 3', '')
-    cmd.print_error('ERROR line 1', 'line 2', '')
-    cmd.print_warning('WARNING line 1', 'line 2', '')
-    cmd.print_success('SUCCESS line 1', 'line 2', '')
-    cmd.print_info('INFO line 1', 'line 2', '')
+    print_method_map = {
+        'multiline': cmd.print_multiline,
+        'error': cmd.print_error,
+        'warning': cmd.print_warning,
+        'success': cmd.print_success,
+        'info': cmd.print_info,
+    }
+    for method_name, print_method in print_method_map.items():
+        print_method(f'{method_name.upper()} line 1', 'line 2', 'line 3')
+        print('')
     # Prompt formatting
     cmd.print_multiline(cmd.format_prompt_text('Normal Prompt'), '')
     cmd.print_multiline(cmd.format_prompt_text('Prompt w/ Default', default_val='default'), '')
