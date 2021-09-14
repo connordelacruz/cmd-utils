@@ -82,7 +82,7 @@ def test_yes_no_prompts():
     val = cmd.prompt('Yes/no prompt w/ default value',
                      'Answer y/n (or default to "no")',
                      prompt_type=cmd.TYPE_YES_NO,
-                     default_val='n')
+                     default_val=False)
     cmd.print_info(f'Return value: "{val}"')
     print('')
     # Initial input
@@ -90,7 +90,7 @@ def test_yes_no_prompts():
     val = cmd.prompt('Yes/no prompt w/ initial input',
                      'You should not see this prompt.',
                      prompt_type=cmd.TYPE_YES_NO,
-                     initial_input='y')
+                     initial_input=True)
     cmd.print_info(f'Return value: "{val}"')
     print('')
 
@@ -147,7 +147,7 @@ def test_choice_prompts():
                      'You should not see this prompt.',
                      prompt_type=cmd.TYPE_CHOICE,
                      choice_list=basic_choice_list,
-                     initial_input='2')
+                     initial_input=2)
     cmd.print_info(f'Return value: "{val}"')
     print('')
 

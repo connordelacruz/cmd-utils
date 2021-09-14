@@ -35,15 +35,22 @@ def indent(text, n=1):
     """Indent a string.
 
     :param text: Text to indent.
-    :param n: (Default: 1) Number of times to indent. Also accepts True (indent once) or False (no indent)
+    :param n: (Default: 1) Number of times to indent. Also accepts True (indent
+        once) or False (no indent)
 
     :return: Indented string
     """
     return INDENT * n + text
 
 
-# TODO: doc and implement
 def format_choice_list_text(choice_list):
+    """Returns a formatted list of choices prefixed by their index for choice
+    prompts.
+
+    :param choice_list: Choice list to display
+
+    :return: Formatted string representation of choice list.
+    """
     # Descriptions assumed to be in 1st position for choice lists with data
     if type(choice_list[0]) in (list, tuple):
         choice_descriptions = [

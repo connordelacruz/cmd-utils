@@ -14,13 +14,18 @@ TYPE_CHOICE = 'choice'
 # PROMPT FUNCTIONS =============================================================
 
 def sanitize_input(val):
-    """Basic prompt input validation.
+    """Basic prompt input string sanitization.
+
+    Will only sanitization strings since initial input or default values may
+    be other types.
 
     :param val: Input to validate
 
     :return: Input with leading/trailing spaces stripped
     """
-    return val.strip()
+    if type(val) == str:
+        val = val.strip()
+    return val
 
 
 def format_prompt_text(prompt_text, default_val=None, prompt_type=TYPE_TEXT):
@@ -37,8 +42,10 @@ def format_prompt_text(prompt_text, default_val=None, prompt_type=TYPE_TEXT):
     if prompt_type == TYPE_YES_NO:
         if default_val is None:
             formatted_prompt += ' (y/n)'
-        elif default_val in ('y', 'n'):
-            formatted_prompt += ' (y/[n])' if default_val == 'n' else ' ([y]/n)'
+        else:
+            if type(default_val) != bool:
+                default_val = default_val == 'y'
+            formatted_prompt += ' ([y]/n)' if default_val else ' (y/[n])'
     else:
         if default_val is not None:
             formatted_prompt += f' [{default_val}]'
@@ -101,7 +108,7 @@ def prompt(prompt_text, *extended_description,
         * TYPE_YES_NO: Prompts the user for yes or no, returns True or False respectively
 
             * **NOTE:** Behavior with optional=True is untested, recommend using
-              default_val='y' or default_val='n'
+              default_val='y' or default_val='n' (can also set to True/False)
 
         * TYPE_CHOICE: Presents the user with a list of options and prompts them for the
           number corresponding to their desired choice
