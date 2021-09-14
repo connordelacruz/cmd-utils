@@ -43,7 +43,7 @@ def test_format_and_print_methods():
 def test_text_prompts():
     cmd.print_header('TEXT PROMPTS')
     print('')
-    # Default prompt
+    # Basic prompt
     val = cmd.prompt('Basic text prompt',
                      'Enter some text.')
     cmd.print_info(f'Return value: "{val}"')
@@ -69,6 +69,32 @@ def test_text_prompts():
     print('')
 
 
+def test_yes_no_prompts():
+    cmd.print_header('YES/NO PROMPTS')
+    print('')
+    # Basic y/n prompt
+    val = cmd.prompt('Basic yes/no prompt',
+                     'Answer y/n (or yes/no if you want)',
+                     prompt_type=cmd.TYPE_YES_NO)
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+    # y/n prompt w/ default value
+    val = cmd.prompt('Yes/no prompt w/ default value',
+                     'Answer y/n (or default to "no")',
+                     prompt_type=cmd.TYPE_YES_NO,
+                     default_val='n')
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+    # Initial input
+    cmd.print_info('The next prompt was given initial input, so you will not be prompted.')
+    val = cmd.prompt('Yes/no prompt w/ initial input',
+                     'You should not see this prompt.',
+                     prompt_type=cmd.TYPE_YES_NO,
+                     initial_input='y')
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+
+
 def dummy_test():
     # TODO REMOVE
     print('dummy')
@@ -82,7 +108,7 @@ def main():
         test_choice_list = [
             ('Format and print methods', test_format_and_print_methods),
             ('Text prompts', test_text_prompts),
-            ('Yes/no prompts', dummy_test),
+            ('Yes/no prompts', test_yes_no_prompts),
             ('Choice prompts', dummy_test),
             ('Exit', None),
         ]
