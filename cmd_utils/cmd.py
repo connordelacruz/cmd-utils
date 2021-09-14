@@ -87,6 +87,7 @@ def get_default_validate_function(prompt_type, optional=False, choice_list=None)
     return validate_function
 
 
+# TODO: assume type is choice prompt if choice_list is specified?
 def prompt(prompt_text, *extended_description,
            prompt_type=TYPE_TEXT, choice_list=None, optional=False,
            initial_input=None, default_val=None,

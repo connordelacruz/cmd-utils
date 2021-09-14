@@ -134,13 +134,13 @@ def test_choice_prompts():
     cmd.print_info(f'Return value: "{val}"')
     print('')
     # Optional choice prompt
-    # val = cmd.prompt('Optional choice prompt',
-    #                  '(Optional) Make a choice from the list below (or not).',
-    #                  prompt_type=cmd.TYPE_CHOICE,
-    #                  choice_list=basic_choice_list,
-    #                  optional=True)
-    # cmd.print_info(f'Return value: "{val}"')
-    # print('')
+    val = cmd.prompt('Optional choice prompt',
+                     '(Optional) Make a choice from the list below (or not).',
+                     prompt_type=cmd.TYPE_CHOICE,
+                     choice_list=basic_choice_list,
+                     optional=True)
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
     # Initial input
     cmd.print_info('The next prompt was given initial input, so you will not be prompted.')
     val = cmd.prompt('Choice prompt w/ initial input',
