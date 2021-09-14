@@ -95,9 +95,60 @@ def test_yes_no_prompts():
     print('')
 
 
-def dummy_test():
-    # TODO REMOVE
-    print('dummy')
+def test_choice_prompts():
+    cmd.print_header('CHOICE PROMPTS')
+    print('')
+    basic_choice_list = [
+        'Option 0',
+        'Option 1',
+        'Option 2',
+        'Option 3',
+    ]
+    choice_list_with_data = [
+        ('Option 0', 'DATA 0'),
+        ('Option 1', 'DATA 1'),
+        ('Option 2', 'DATA 2'),
+        ('Option 3', 'DATA 3'),
+    ]
+    # Basic choice prompt
+    val = cmd.prompt('Basic choice prompt',
+                     'Make a choice from the list below.',
+                     prompt_type=cmd.TYPE_CHOICE,
+                     choice_list=basic_choice_list)
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+    # Choice prompt w/ return data
+    val = cmd.prompt('Choice prompt w/ return data',
+                     'You can specify data to return for each choice instead of the list index.',
+                     'Make a choice from the list below.',
+                     prompt_type=cmd.TYPE_CHOICE,
+                     choice_list=choice_list_with_data)
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+    # Choice prompt w/ default
+    val = cmd.prompt('Choice prompt w/ default value',
+                     'Make a choice from the list below (or not).',
+                     prompt_type=cmd.TYPE_CHOICE,
+                     choice_list=basic_choice_list,
+                     default_val=1)
+    cmd.print_info(f'Return value: "{val}"')
+    print('')
+    # Optional choice prompt
+    # val = cmd.prompt('Optional choice prompt',
+    #                  '(Optional) Make a choice from the list below (or not).',
+    #                  prompt_type=cmd.TYPE_CHOICE,
+    #                  choice_list=basic_choice_list,
+    #                  optional=True)
+    # cmd.print_info(f'Return value: "{val}"')
+    # print('')
+    # Initial input
+    cmd.print_info('The next prompt was given initial input, so you will not be prompted.')
+    val = cmd.prompt('Choice prompt w/ initial input',
+                     'You should not see this prompt.',
+                     prompt_type=cmd.TYPE_CHOICE,
+                     choice_list=basic_choice_list,
+                     initial_input='2')
+    cmd.print_info(f'Return value: "{val}"')
     print('')
 
 
@@ -109,7 +160,7 @@ def main():
             ('Format and print methods', test_format_and_print_methods),
             ('Text prompts', test_text_prompts),
             ('Yes/no prompts', test_yes_no_prompts),
-            ('Choice prompts', dummy_test),
+            ('Choice prompts', test_choice_prompts),
             ('Exit', None),
         ]
         test_choice = cmd.prompt(
