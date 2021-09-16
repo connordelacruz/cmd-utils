@@ -65,6 +65,7 @@ def format_choice_list_text(choice_list):
 
 # PRINTING FUNCTIONS ===========================================================
 
+# TODO indent_subsequent_lines=False
 def print_multiline(first_line, *subsequent_lines,
                     first_line_formatting=None, text_formatting=None,
                     indent_first_line=False, indent_subsequent_lines=True):
@@ -93,6 +94,8 @@ def print_multiline(first_line, *subsequent_lines,
         for line in subsequent_lines:
             print(fmt_func(indent(str(line), indent_subsequent_lines)))
 
+
+# TODO: take kwargs to pass to print multiline?
 
 def print_error(*lines):
     print_multiline(*lines, first_line_formatting=ERROR_TITLE, text_formatting=ERROR)
