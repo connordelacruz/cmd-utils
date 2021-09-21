@@ -65,10 +65,9 @@ def format_choice_list_text(choice_list):
 
 # PRINTING FUNCTIONS ===========================================================
 
-# TODO indent_subsequent_lines=False
 def print_multiline(first_line, *subsequent_lines,
                     first_line_formatting=None, text_formatting=None,
-                    indent_first_line=False, indent_subsequent_lines=True):
+                    indent_first_line=False, indent_subsequent_lines=False):
     """Print multiple lines
 
     :param first_line: First line to print
@@ -78,8 +77,8 @@ def print_multiline(first_line, *subsequent_lines,
     :param text_formatting: (Optional) Set to a formatting constant to format each
         line
     :param indent_first_line: (Default: False) If True, indent the first line
-    :param indent_subsequent_lines: (Default: True) If True and there's multiple lines, indent
-        all lines after the first
+    :param indent_subsequent_lines: (Default: False) If True and there's
+        multiple lines, indent all lines after the first
     """
     if text_formatting not in COLORS:
         text_formatting = None
@@ -95,22 +94,41 @@ def print_multiline(first_line, *subsequent_lines,
             print(fmt_func(indent(str(line), indent_subsequent_lines)))
 
 
-# TODO: take kwargs to pass to print multiline?
+def print_error(*lines, **kwargs):
+    """Print lines with error formatting.
 
-def print_error(*lines):
-    print_multiline(*lines, first_line_formatting=ERROR_TITLE, text_formatting=ERROR)
-
-
-def print_warning(*lines):
-    print_multiline(*lines, text_formatting=WARNING)
-
-
-def print_success(*lines):
-    print_multiline(*lines, text_formatting=SUCCESS)
+    Takes optional **kwargs to pass to print_multiline.
+    """
+    kwargs['first_line_formatting'] = ERROR_TITLE
+    kwargs['text_formatting'] = ERROR
+    print_multiline(*lines, **kwargs)
 
 
-def print_info(*lines):
-    print_multiline(*lines, text_formatting=INFO)
+def print_warning(*lines, **kwargs):
+    """Print lines with warning formatting.
+
+    Takes optional **kwargs to pass to print_multiline.
+    """
+    kwargs['text_formatting'] = WARNING
+    print_multiline(*lines, **kwargs)
+
+
+def print_success(*lines, **kwargs):
+    """Print lines with success formatting.
+
+    Takes optional **kwargs to pass to print_multiline.
+    """
+    kwargs['text_formatting'] = SUCCESS
+    print_multiline(*lines, **kwargs)
+
+
+def print_info(*lines, **kwargs):
+    """Print lines with info formatting.
+
+    Takes optional **kwargs to pass to print_multiline.
+    """
+    kwargs['text_formatting'] = INFO
+    print_multiline(*lines, **kwargs)
 
 
 def print_header(*lines, center_char='=',
@@ -135,3 +153,4 @@ def print_header(*lines, center_char='=',
             if center_maxed_lines:
                 formatted_line = formatted_line.center(_term.width)
             print(formatted_line)
+

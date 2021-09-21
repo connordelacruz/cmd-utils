@@ -36,7 +36,7 @@ def test_format_and_print_methods():
     # Indentation
     cmd.print_multiline(*[
         cmd.indent(f'Indent Level {i}', i) for i in range(0, 5)
-    ], indent_subsequent_lines=False)
+    ])
     print('')
 
 
