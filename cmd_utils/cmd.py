@@ -162,12 +162,14 @@ def prompt(prompt_text, *extended_description,
 
     :return: Input after sanitization, formatting, and validation
     """
+    # PROMPT TYPE SETUP --------------------------------------------------------
     # Check that we have everything we need based on prompt_type
     if prompt_type == TYPE_CHOICE and (choice_list is None or len(choice_list) == 0):
         raise Exception('choice_list is required and must be non-empty if prompt_type is TYPE_CHOICE')
     # If unspecified, get default validate_function based on type
     if validate_function is None:
         validate_function = get_default_validate_function(prompt_type, optional, choice_list)
+    # PARSE INITIAL INPUT ------------------------------------------------------
     # If input for this prompt was given via an argument, attempt to validate
     # it and bypass prompt
     if initial_input is not None:
@@ -184,11 +186,14 @@ def prompt(prompt_text, *extended_description,
                 print_error(e)
         else:
             return val
+    # PRINT AND FORMAT PROMPT --------------------------------------------------
     # Print description
     if extended_description:
+        # TODO: print_multiline()?
         print(*extended_description, sep='\n')
     # Print choice_list if applicable
     if prompt_type == TYPE_CHOICE:
+        # TODO: print_multiline()?
         print(
             '',
             format_choice_list_text(choice_list),
@@ -197,6 +202,7 @@ def prompt(prompt_text, *extended_description,
         )
     # Format prompt
     text = format_prompt_text(prompt_text, default_val=default_val, prompt_type=prompt_type)
+    # PROMPT FOR INPUT ---------------------------------------------------------
     # Loop until we get valid input
     while True:
         val = sanitize_function(input(text))
@@ -216,6 +222,7 @@ def prompt(prompt_text, *extended_description,
             print_error(e)
             continue
         break
+    # RETURN RESULT ------------------------------------------------------------
     if print_newline_on_success:
         print('')
     return val
